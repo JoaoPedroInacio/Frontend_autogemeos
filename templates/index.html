@@ -92,17 +92,18 @@
                 <button class="w-full bg-accent py-3 rounded-xl font-bold mt-4 shadow-lg shadow-orange-900/20">Aplicar Filtros</button>
             </aside>
 
-            <div class="flex-1">
-                <div class="flex justify-between items-center mb-10">
-                    <h2 class="text-3xl font-bold"><span class="accent-color">10</span> veículos encontrados</h2>
-                    <div class="flex gap-2">
-                        <button class="p-2 bg-accent rounded">🔳</button>
-                        <button class="p-2 bg-white/5 rounded">≡</button>
-                    </div>
-                </div>
+   <div class="flex justify-between items-center mb-10">
+    <h2 class="text-3xl font-bold">
+        <span id="total-veiculos" class="accent-color">0</span> veículos encontrados
+    </h2>
+    <div class="flex gap-2">
+        <button class="p-2 bg-accent rounded">🔳</button>
+        <button class="p-2 bg-white/5 rounded">≡</button>
+    </div>
+</div>
 
-                <div id="grid-veiculos" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-    {% for carro in carros %}
+<div id="grid-veiculos" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+
     <div class="bg-[#111] rounded-2xl border border-white/5 overflow-hidden group hover:border-orange-500/50 transition-all">
         <img src="{{ carro.img }}" class="w-full h-52 object-cover">
         <div class="p-6">
@@ -126,40 +127,73 @@
         </div>
     </section>
 
-    <script>
-        const stock = [
-            { id: 1, marca: "BMW", modelo: "M4 Competition", preco: "89.900", ano: 2023, kms: "12.500", img: "https://images.unsplash.com/photo-1617531653332-bd46c24f2068?w=800" },
-            { id: 2, marca: "Mercedes-Benz", modelo: "AMG GT 63", preco: "145.000", ano: 2022, kms: "18.000", img: "https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=800" },
-            { id: 3, marca: "Audi", modelo: "RS6 Avant", preco: "135.000", ano: 2023, kms: "8.500", img: "https://images.unsplash.com/photo-1606148664002-09372209e663?w=800" },
-            { id: 4, marca: "Porsche", modelo: "911 Carrera S", preco: "160.000", ano: 2021, kms: "22.000", img: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=800" },
-        ];
+   <script>
+    const container = document.getElementById('grid-veiculos');
 
-        const container = document.getElementById('grid-veiculos');
-        
-        container.innerHTML = stock.map(carro => `
-            <div class="bg-[#111] rounded-2xl overflow-hidden border border-white/5 group hover:border-accent/50 transition-all duration-500">
-                <div class="relative h-52 overflow-hidden">
-                    <img src="${carro.img}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
-                    <div class="absolute top-4 left-4 bg-accent text-white text-[10px] font-bold px-2 py-1 rounded uppercase">Destaque</div>
-                </div>
-                <div class="p-6">
-                    <div class="flex justify-between items-start mb-4">
-                        <div>
-                            <p class="text-xs text-gray-500 uppercase tracking-widest font-bold">${carro.marca}</p>
-                            <h3 class="text-xl font-bold text-white">${carro.modelo}</h3>
+    async function carregarVeiculos() {
+        try {
+            const response = await fetch('/api/veiculos/');
+            if (!response.ok) {
+                throw new Error('Erro ao obter veículos');
+            }
+
+            const stock = await response.json();
+
+            document.getElementById('total-veiculos').textContent = stock.length;
+
+            if (!stock.length) {
+                container.innerHTML = "<p class='text-gray-400'>Sem veículos disponíveis.</p>";
+                return;
+            }
+
+            container.innerHTML = stock.map(carro => `
+                <div class="bg-[#111] rounded-2xl overflow-hidden border border-white/5 group hover:border-accent/50 transition-all duration-500">
+                    <div class="relative h-52 overflow-hidden">
+                        <img
+                            src="${carro.vei_imagem || 'https://via.placeholder.com/800x500?text=Sem+Imagem'}"
+                            class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                            alt="${carro.vei_modelo || 'Veículo'}"
+                        >
+                        <div class="absolute top-4 left-4 bg-accent text-white text-[10px] font-bold px-2 py-1 rounded uppercase">
+                            Destaque
                         </div>
-                        <p class="accent-color font-bold text-xl">${carro.preco} €</p>
                     </div>
-                    <div class="flex justify-between border-t border-white/5 pt-4 text-gray-400 text-xs">
-                        <span class="flex items-center gap-1">📅 ${carro.ano}</span>
-                        <span class="flex items-center gap-1">🛣️ ${carro.kms} km</span>
-                        <span class="flex items-center gap-1">⛽ Gasolina</span>
+
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <p class="text-xs text-gray-500 uppercase tracking-widest font-bold">
+                                    ${carro.vei_marca || ''}
+                                </p>
+                                <h3 class="text-xl font-bold text-white">
+                                    ${carro.vei_modelo || ''}
+                                </h3>
+                            </div>
+                            <p class="accent-color font-bold text-xl">
+                                ${carro.vei_preco || ''} €
+                            </p>
+                        </div>
+
+                        <div class="flex justify-between border-t border-white/5 pt-4 text-gray-400 text-xs">
+                            <span>📅 ${carro.vei_ano || ''}</span>
+                            <span>🛣️ ${carro.vei_kms || ''} km</span>
+                            <span>⛽ ${carro.vei_combustivel || ''}</span>
+                        </div>
+
+                        <a href="detalhe_veiculo.html?id=${carro.id}" class="block text-center w-full mt-6 py-3 border border-white/10 rounded-xl text-sm font-bold group-hover:bg-accent group-hover:border-accent transition-all">
+                            Ver detalhes →
+                        </a>
                     </div>
-                    <button class="w-full mt-6 py-3 border border-white/10 rounded-xl text-sm font-bold group-hover:bg-accent group-hover:border-accent transition-all">Ver detalhes →</button>
                 </div>
-            </div>
-        `).join('');
-    </script>
+            `).join('');
+        } catch (error) {
+            console.error(error);
+            container.innerHTML = "<p class='text-red-500'>Erro ao carregar veículos.</p>";
+        }
+    }
+
+    carregarVeiculos();
+</script>
 
 </body>
 </html>
