@@ -150,9 +150,9 @@
                 <div class="bg-[#111] rounded-2xl overflow-hidden border border-white/5 group hover:border-accent/50 transition-all duration-500">
                     <div class="relative h-52 overflow-hidden">
                         <img
-                            src="${carro.vei_imagem || 'https://via.placeholder.com/800x500?text=Sem+Imagem'}"
+                            src="${carro.vei_imagem || '/static/images/logo.png'}"
                             class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                            alt="${carro.vei_modelo || 'Veículo'}"
+                            alt="${carro.modelo || 'Veículo'}"
                         >
                         <div class="absolute top-4 left-4 bg-accent text-white text-[10px] font-bold px-2 py-1 rounded uppercase">
                             Destaque
@@ -163,24 +163,24 @@
                         <div class="flex justify-between items-start mb-4">
                             <div>
                                 <p class="text-xs text-gray-500 uppercase tracking-widest font-bold">
-                                    ${carro.vei_marca || ''}
+                                    ${carro.marca || ''}
                                 </p>
                                 <h3 class="text-xl font-bold text-white">
-                                    ${carro.vei_modelo || ''}
+                                    ${carro.modelo || ''}
                                 </h3>
                             </div>
                             <p class="accent-color font-bold text-xl">
-                                ${carro.vei_preco || ''} €
+                                ${carro.vei_preco_venda || ''} €
                             </p>
                         </div>
 
                         <div class="flex justify-between border-t border-white/5 pt-4 text-gray-400 text-xs">
                             <span>📅 ${carro.vei_ano || ''}</span>
-                            <span>🛣️ ${carro.vei_kms || ''} km</span>
-                            <span>⛽ ${carro.vei_combustivel || ''}</span>
+                            <span>🛣️ ${carro.vei_quilometros || ''} km</span>
+                            <span>⛽ ${carro.combustivel || ''}</span>
                         </div>
 
-                        <a href="detalhe_veiculo.html?id=${carro.id}" class="block text-center w-full mt-6 py-3 border border-white/10 rounded-xl text-sm font-bold group-hover:bg-accent group-hover:border-accent transition-all">
+                        <a href="detalhe_veiculo.html?id=${carro.vei_id}" class="block text-center w-full mt-6 py-3 border border-white/10 rounded-xl text-sm font-bold group-hover:bg-accent group-hover:border-accent transition-all">
                             Ver detalhes →
                         </a>
                     </div>
