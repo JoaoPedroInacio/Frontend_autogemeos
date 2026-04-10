@@ -103,27 +103,7 @@
 </div>
 
 <div id="grid-veiculos" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
-
-    <div class="bg-[#111] rounded-2xl border border-white/5 overflow-hidden group hover:border-orange-500/50 transition-all">
-        <img src="{{ carro.img }}" class="w-full h-52 object-cover">
-        <div class="p-6">
-            <p class="text-xs text-gray-500 uppercase font-bold">{{ carro.marca }}</p>
-            <h3 class="text-xl font-bold text-white">{{ carro.modelo }}</h3>
-            <p class="text-orange-500 font-bold text-xl mt-2">{{ carro.preco }} €</p>
-            
-            <div class="flex justify-between mt-4 text-gray-400 text-xs border-t border-white/5 pt-4">
-                <span>📅 {{ carro.ano }}</span>
-                <span>🛣️ {{ carro.kms }} km</span>
-            </div>
-            
-            <a href="/veiculo/{{ carro.id }}" class="block text-center mt-6 py-3 bg-white/5 rounded-xl hover:bg-orange-600 transition">
-                Ver detalhes →
-            </a>
-        </div>
-    </div>
-    {% endfor %}
-</div>
-
+         </div>
         </div>
     </section>
 
@@ -160,7 +140,7 @@
                     </div>
 
                     <div class="p-6">
-                        <div class="flex justify-between items-start mb-4">
+    <div class="mb-4">
                             <div>
                                 <p class="text-xs text-gray-500 uppercase tracking-widest font-bold">
                                     ${carro.marca || ''}
@@ -169,9 +149,9 @@
                                     ${carro.modelo || ''}
                                 </h3>
                             </div>
-                            <p class="accent-color font-bold text-xl">
-                                ${carro.vei_preco_venda || ''} €
-                            </p>
+                           <p class="accent-color font-bold text-2xl mt-3">
+    ${carro.vei_preco_venda || ''} €
+</p>
                         </div>
 
                         <div class="flex justify-between border-t border-white/5 pt-4 text-gray-400 text-xs">
