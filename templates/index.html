@@ -25,8 +25,8 @@
         <div class="hidden md:flex gap-8 text-gray-400 font-medium">
             <a href="#" class="hover:text-white transition">Início</a>
             <a href="#stock" class="hover:text-white transition">Veículos</a>
-            <a href="#sobre" class="hover:text-white transition">Sobre Nós</a>
-            <a href="#contacto" class="hover:text-white transition">Contacto</a>
+            <a href="/sobre" class="hover:text-white transition">Sobre Nós</a>
+            <a href="/contacto" class="hover:text-white transition">Contacto</a>
         </div>
         <button class="bg-accent text-white px-6 py-2 rounded-lg font-bold hover:opacity-90 transition">Ver Stock</button>
     </nav>
@@ -130,7 +130,7 @@
                 <div class="bg-[#111] rounded-2xl overflow-hidden border border-white/5 group hover:border-accent/50 transition-all duration-500">
                     <div class="relative h-52 overflow-hidden">
                         <img
-                            src="${carro.vei_imagem || '/static/logo.png'}"
+                            src="${carro.vei_imagem || '/assets/logo.png'}"
                             class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                             alt="${carro.modelo || 'Veículo'}"
                         >
