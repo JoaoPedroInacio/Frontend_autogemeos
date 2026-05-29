@@ -1,112 +1,280 @@
-<script>
-    const container = document.getElementById('grid-veiculos');
-    const total = document.getElementById('total-veiculos');
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Veículos | Autogémeos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
 
-    let stockOriginal = [];
+    <style>
+        body { background-color: #0A0A0A; color: white; font-family: 'Inter', sans-serif; scroll-behavior: smooth; }
+        .accent-color { color: #F06418; }
+        .bg-accent { background-color: #F06418; }
+        .border-accent { border-color: #F06418; }
+        .glass { background: rgba(20, 20, 20, 0.8); backdrop-filter: blur(10px); }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+    </style>
+</head>
 
-    async function carregarVeiculos() {
-        try {
-            const response = await fetch('/api/veiculos/');
-            const stock = await response.json();
+<body class="custom-scrollbar">
 
-            stockOriginal = stock;
-            preencherMarcas(stock);
-            mostrarVeiculos(stock);
+    <nav class="flex justify-between items-center px-6 md:px-12 py-6 glass fixed w-full z-50 border-b border-white/5">
+        <div class="flex items-center gap-2">
+            <a href="/" class="text-2xl font-bold tracking-tighter uppercase italic">
+                Auto<span class="accent-color">Gémeos</span>
+            </a>
+        </div>
 
-        } catch (error) {
-            console.error(error);
-            container.innerHTML = "<p class='text-red-500'>Erro ao carregar veículos.</p>";
-        }
-    }
+        <div class="hidden md:flex gap-8 text-gray-400 font-medium">
+            <a href="/" class="hover:text-white transition">Início</a>
+            <a href="/veiculos" class="text-white transition">Veículos</a>
+            <a href="/sobre" class="hover:text-white transition">Sobre Nós</a>
+            <a href="/contacto" class="hover:text-white transition">Contacto</a>
+        </div>
 
-    function mostrarVeiculos(stock) {
-        total.textContent = stock.length;
+        <a href="/contacto" class="bg-accent text-white px-6 py-2 rounded-lg font-bold hover:opacity-90 transition">
+            Contactar
+        </a>
+    </nav>
 
-        if (!stock.length) {
-            container.innerHTML = "<p class='text-gray-400'>Sem veículos encontrados.</p>";
-            return;
-        }
+    <header class="relative min-h-[55vh] flex items-center px-6 md:px-12 pt-28">
+        <div class="absolute inset-0 z-0">
+            <img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&q=80&w=1920"
+                 class="w-full h-full object-cover opacity-30">
+            <div class="absolute inset-0 bg-gradient-to-r from-black via-black/80 to-transparent"></div>
+        </div>
 
-        container.innerHTML = stock.map(carro => `
-            <div class="bg-[#111] rounded-2xl overflow-hidden border border-white/5 group hover:border-accent/50 transition-all duration-500">
-                <div class="relative h-52 overflow-hidden">
-                    <img
-                        src="${carro.vei_imagem || '/static/logo.png'}"
-                        class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                        alt="${carro.modelo || 'Veículo'}"
-                    >
-
-                    <div class="absolute top-4 left-4 bg-accent text-white text-[10px] font-bold px-2 py-1 rounded uppercase">
-                        Destaque
-                    </div>
-                </div>
-
-                <div class="p-6">
-                    <p class="text-xs text-gray-500 uppercase tracking-widest font-bold">
-                        ${carro.marca || ''}
-                    </p>
-
-                    <h3 class="text-xl font-bold text-white">
-                        ${carro.modelo || ''}
-                    </h3>
-
-                    <p class="accent-color font-bold text-2xl mt-3">
-                        ${Number(carro.vei_preco_venda || 0).toLocaleString('pt-PT')} €
-                    </p>
-
-                    <div class="flex justify-between border-t border-white/5 pt-4 mt-4 text-gray-400 text-xs">
-                        <span>📅 ${carro.vei_ano || ''}</span>
-                        <span>🛣️ ${carro.vei_quilometros || ''} km</span>
-                        <span>⛽ ${carro.combustivel || ''}</span>
-                    </div>
-
-                    <a href="/detalhe_veiculo?id=${carro.vei_id}" class="block text-center w-full mt-6 py-3 border border-white/10 rounded-xl text-sm font-bold group-hover:bg-accent group-hover:border-accent transition-all">
-                        Ver detalhes →
-                    </a>
-                </div>
+        <div class="relative z-10 max-w-4xl">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 mb-6">
+                <span class="w-2 h-2 rounded-full bg-accent"></span>
+                <span class="text-xs font-semibold uppercase tracking-widest text-gray-300">
+                    Stock disponível
+                </span>
             </div>
-        `).join('');
-    }
 
-    function preencherMarcas(stock) {
-        const selectMarca = document.getElementById('filtro-marca');
-        const marcas = [...new Set(stock.map(carro => carro.marca).filter(Boolean))];
+            <h1 class="text-5xl md:text-7xl font-bold leading-none mb-6">
+                Os nossos <span class="accent-color">Veículos</span>
+            </h1>
 
-        selectMarca.innerHTML = `
-            <option value="">Todas as Marcas</option>
-            ${marcas.map(marca => `<option value="${marca}">${marca}</option>`).join('')}
-        `;
-    }
+            <p class="text-gray-400 text-lg md:text-xl max-w-2xl leading-relaxed">
+                Explore a nossa seleção de veículos disponíveis e encontre o carro ideal para si.
+            </p>
+        </div>
+    </header>
 
-    function aplicarFiltros() {
-        const pesquisa = document.getElementById('filtro-pesquisa').value.toLowerCase();
-        const marca = document.getElementById('filtro-marca').value;
-        const combustivel = document.getElementById('filtro-combustivel').value;
-        const preco = document.getElementById('filtro-preco').value;
-        const ano = document.getElementById('filtro-ano').value;
+    <section class="py-24 px-6 md:px-12 bg-[#0A0A0A]">
+        <div class="flex flex-col md:flex-row gap-12">
 
-        let filtrados = stockOriginal.filter(carro => {
-            const texto = `${carro.marca || ''} ${carro.modelo || ''}`.toLowerCase();
+            <aside class="w-full md:w-80 space-y-8 bg-[#111] p-8 rounded-2xl h-fit border border-white/5">
+                <div class="flex items-center gap-2 mb-4">
+                    <span class="accent-color text-xl">⚙️</span>
+                    <h2 class="text-xl font-bold">Filtros</h2>
+                </div>
 
-            if (pesquisa && !texto.includes(pesquisa)) return false;
-            if (marca && carro.marca !== marca) return false;
-            if (combustivel && carro.combustivel !== combustivel) return false;
-            if (ano && String(carro.vei_ano) !== ano) return false;
+                <div>
+                    <label class="text-xs uppercase font-bold text-gray-500 mb-2 block">Pesquisar</label>
+                    <input
+                        id="filtro-pesquisa"
+                        type="text"
+                        placeholder="Marca, modelo..."
+                        oninput="aplicarFiltros()"
+                        class="w-full bg-black border border-white/10 rounded-lg p-3 text-sm focus:border-accent outline-none">
+                </div>
 
-            if (preco) {
-                const valor = Number(carro.vei_preco_venda || 0);
+                <div>
+                    <label class="text-xs uppercase font-bold text-gray-500 mb-2 block">Marca</label>
+                    <select
+                        id="filtro-marca"
+                        onchange="aplicarFiltros()"
+                        class="w-full bg-black border border-white/10 rounded-lg p-3 text-sm outline-none">
+                        <option value="">Todas as Marcas</option>
+                    </select>
+                </div>
 
-                if (preco === '50000' && valor > 50000) return false;
-                if (preco === '100000' && valor > 100000) return false;
-                if (preco === '150000' && valor > 150000) return false;
-                if (preco === '150001' && valor <= 150000) return false;
+                <div>
+                    <label class="text-xs uppercase font-bold text-gray-500 mb-2 block">Combustível</label>
+                    <select
+                        id="filtro-combustivel"
+                        onchange="aplicarFiltros()"
+                        class="w-full bg-black border border-white/10 rounded-lg p-3 text-sm outline-none">
+                        <option value="">Todos</option>
+                        <option value="Gasolina">Gasolina</option>
+                        <option value="Diesel">Diesel</option>
+                        <option value="Elétrico">Elétrico</option>
+                        <option value="Híbrido">Híbrido</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="text-xs uppercase font-bold text-gray-500 mb-2 block">Preço</label>
+                    <select
+                        id="filtro-preco"
+                        onchange="aplicarFiltros()"
+                        class="w-full bg-black border border-white/10 rounded-lg p-3 text-sm outline-none">
+                        <option value="">Todos</option>
+                        <option value="50000">Até 50.000 €</option>
+                        <option value="100000">Até 100.000 €</option>
+                        <option value="150000">Até 150.000 €</option>
+                        <option value="150001">Mais de 150.000 €</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="text-xs uppercase font-bold text-gray-500 mb-2 block">Ano</label>
+                    <select
+                        id="filtro-ano"
+                        onchange="aplicarFiltros()"
+                        class="w-full bg-black border border-white/10 rounded-lg p-3 text-sm outline-none">
+                        <option value="">Todos</option>
+                        <option value="2026">2026</option>
+                        <option value="2025">2025</option>
+                        <option value="2024">2024</option>
+                        <option value="2023">2023</option>
+                        <option value="2022">2022</option>
+                        <option value="2021">2021</option>
+                        <option value="2020">2020</option>
+                    </select>
+                </div>
+
+                <button onclick="aplicarFiltros()"
+                        class="w-full bg-accent py-3 rounded-xl font-bold mt-4 shadow-lg shadow-orange-900/20">
+                    Aplicar Filtros
+                </button>
+            </aside>
+
+            <main class="flex-1">
+                <div class="flex justify-between items-center mb-10">
+                    <h2 class="text-3xl font-bold">
+                        <span id="total-veiculos" class="accent-color">0</span> veículos encontrados
+                    </h2>
+                </div>
+
+                <div id="grid-veiculos" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+            </main>
+
+        </div>
+    </section>
+
+    <script>
+        const container = document.getElementById('grid-veiculos');
+        const total = document.getElementById('total-veiculos');
+
+        let stockOriginal = [];
+
+        async function carregarVeiculos() {
+            try {
+                const response = await fetch('/api/veiculos/');
+
+                if (!response.ok) {
+                    throw new Error('Erro ao obter veículos');
+                }
+
+                const stock = await response.json();
+
+                stockOriginal = stock;
+                preencherMarcas(stock);
+                mostrarVeiculos(stock);
+
+            } catch (error) {
+                console.error(error);
+                container.innerHTML = "<p class='text-red-500'>Erro ao carregar veículos.</p>";
+            }
+        }
+
+        function mostrarVeiculos(stock) {
+            total.textContent = stock.length;
+
+            if (!stock.length) {
+                container.innerHTML = "<p class='text-gray-400'>Sem veículos encontrados.</p>";
+                return;
             }
 
-            return true;
-        });
+            container.innerHTML = stock.map(carro => `
+                <div class="bg-[#111] rounded-2xl overflow-hidden border border-white/5 group hover:border-accent/50 transition-all duration-500">
+                    <div class="relative h-52 overflow-hidden">
+                        <img
+                            src="${carro.vei_imagem || '/static/logo.png'}"
+                            class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                            alt="${carro.modelo || 'Veículo'}"
+                        >
 
-        mostrarVeiculos(filtrados);
-    }
+                        <div class="absolute top-4 left-4 bg-accent text-white text-[10px] font-bold px-2 py-1 rounded uppercase">
+                            Destaque
+                        </div>
+                    </div>
 
-    carregarVeiculos();
-</script>
+                    <div class="p-6">
+                        <p class="text-xs text-gray-500 uppercase tracking-widest font-bold">
+                            ${carro.marca || ''}
+                        </p>
+
+                        <h3 class="text-xl font-bold text-white">
+                            ${carro.modelo || ''}
+                        </h3>
+
+                        <p class="accent-color font-bold text-2xl mt-3">
+                            ${Number(carro.vei_preco_venda || 0).toLocaleString('pt-PT')} €
+                        </p>
+
+                        <div class="flex justify-between border-t border-white/5 pt-4 mt-4 text-gray-400 text-xs">
+                            <span>📅 ${carro.vei_ano || ''}</span>
+                            <span>🛣️ ${carro.vei_quilometros || ''} km</span>
+                            <span>⛽ ${carro.combustivel || ''}</span>
+                        </div>
+
+                        <a href="/veiculo/${carro.vei_id}"
+                           class="block text-center w-full mt-6 py-3 border border-white/10 rounded-xl text-sm font-bold group-hover:bg-accent group-hover:border-accent transition-all">
+                            Ver detalhes →
+                        </a>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function preencherMarcas(stock) {
+            const selectMarca = document.getElementById('filtro-marca');
+            const marcas = [...new Set(stock.map(carro => carro.marca).filter(Boolean))];
+
+            selectMarca.innerHTML = `
+                <option value="">Todas as Marcas</option>
+                ${marcas.map(marca => `<option value="${marca}">${marca}</option>`).join('')}
+            `;
+        }
+
+        function aplicarFiltros() {
+            const pesquisa = document.getElementById('filtro-pesquisa').value.toLowerCase();
+            const marca = document.getElementById('filtro-marca').value;
+            const combustivel = document.getElementById('filtro-combustivel').value;
+            const preco = document.getElementById('filtro-preco').value;
+            const ano = document.getElementById('filtro-ano').value;
+
+            let filtrados = stockOriginal.filter(carro => {
+                const texto = `${carro.marca || ''} ${carro.modelo || ''}`.toLowerCase();
+
+                if (pesquisa && !texto.includes(pesquisa)) return false;
+                if (marca && carro.marca !== marca) return false;
+                if (combustivel && carro.combustivel !== combustivel) return false;
+                if (ano && String(carro.vei_ano) !== ano) return false;
+
+                if (preco) {
+                    const valor = Number(carro.vei_preco_venda || 0);
+
+                    if (preco === '50000' && valor > 50000) return false;
+                    if (preco === '100000' && valor > 100000) return false;
+                    if (preco === '150000' && valor > 150000) return false;
+                    if (preco === '150001' && valor <= 150000) return false;
+                }
+
+                return true;
+            });
+
+            mostrarVeiculos(filtrados);
+        }
+
+        carregarVeiculos();
+    </script>
+
+</body>
+</html>

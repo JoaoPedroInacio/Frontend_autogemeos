@@ -1,39 +1,45 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, jsonify
 
 app = Flask(__name__)
 
-# Simulação de uma Base de Dados de Carros
-# No futuro, isto virá de um ficheiro SQL
 stock_carros = [
     {
-        'id': 1,
+        'vei_id': 1,
         'marca': 'BMW',
         'modelo': 'M4 Competition',
-        'preco': '89.900',
-        'ano': 2022,
-        'kms': '12.500',
-        'img': 'https://images.unsplash.com/photo-1617531653332-bd46c24f2068?w=800'
+        'vei_preco_venda': 89900,
+        'vei_ano': 2022,
+        'vei_quilometros': '12.500',
+        'combustivel': 'Gasolina',
+        'vei_imagem': 'https://images.unsplash.com/photo-1617531653332-bd46c24f2068?w=800'
     },
     {
-        'id': 2,
+        'vei_id': 2,
         'marca': 'Mercedes-Benz',
         'modelo': 'AMG GT 63',
-        'preco': '145.000',
-        'ano': 2022,
-        'kms': '18.000',
-        'img': 'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=800'
+        'vei_preco_venda': 145000,
+        'vei_ano': 2022,
+        'vei_quilometros': '18.000',
+        'combustivel': 'Gasolina',
+        'vei_imagem': 'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=800'
     }
 ]
 
 @app.route('/')
 def home():
-    # Enviamos a lista de carros para o HTML
-    return render_template('index.html', carros=stock_carros)
+    return render_template('index.html')
+
+@app.route('/veiculos')
+def veiculos():
+    return render_template('veiculos.html')
+
+@app.route('/api/veiculos/')
+def api_veiculos():
+    return jsonify(stock_carros)
 
 @app.route('/veiculo/<int:id>')
 def detalhe(id):
-    # Procura o carro pelo ID na nossa lista
-    carro = next((c for c in stock_carros if c['id'] == id), None)
+    carro = next((c for c in stock_carros if c['vei_id'] == id), None)
     return render_template('detalhe_veiculo.html', carro=carro)
 
 @app.route('/sobre')
